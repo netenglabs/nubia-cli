@@ -15,7 +15,7 @@ import subprocess
 import sys
 from collections import defaultdict
 from functools import partial
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Callable
 
 from nubia.internal.helpers import try_await  # noqa F401
 from nubia.internal.typing.builder import (
@@ -112,6 +112,8 @@ def register_command(argparse_parser, inspection):
         add_argument_args, add_argument_kwargs = _argument_to_argparse_input(arg)
         groups = [group for group in exclusive_args if arg.name in group]
 
+        if isinstance(add_argument_kwargs.get('choices', []), Callable):
+            add_argument_kwargs.pop('choices')
         if not groups:
             subparser.add_argument(*add_argument_args, **add_argument_kwargs)
         elif len(groups) == 1:
@@ -218,9 +220,10 @@ def _argument_to_argparse_input(arg: "Any") -> "Tuple[List, Dict[str, Any]]":
 
     if arg.choices:
         add_argument_kwargs["choices"] = arg.choices
-        add_argument_kwargs["metavar"] = "{{{}}}".format(
-            ",".join(map(str, arg.choices))
-        )
+        if not isinstance(arg.choices, Callable):
+            add_argument_kwargs["metavar"] = "{{{}}}".format(
+                ",".join(map(str, arg.choices))
+            )
     if arg.positional and "metavar" in add_argument_kwargs:
         add_argument_kwargs["metavar"] = "{}<{}>".format(
             arg.name, add_argument_kwargs["metavar"]
