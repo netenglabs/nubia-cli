@@ -9,7 +9,7 @@
 
 import itertools
 import logging
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING, Iterable, Callable, List
 
 import pyparsing as pp
 from prompt_toolkit.completion import CompleteEvent, Completion
@@ -127,6 +127,28 @@ class AutoCommandCompletion:
         Returns a
         """
         logger = logging.getLogger(f"{type(self).__name__}.get_completions")
+
+        # This is a rather sad piece of code. Since nubia uses <keyword>= as
+        # the completion string, when we specify choices for a keyword, and
+        # select the keyword from the autocompletion suggestion by hitting
+        # SPACE, the additional space confuses the autocompleter for the
+        # values associated with the space. For example, if you had state=
+        # as a keyword, and "up" and "down" as possible choices for the keyword
+        # once you've selected state= from the completion list by hitting SPACE
+        # up and down pop up as possible choices, but typing the first letter
+        # of a choice such as u(for up), doesn't trim the selection to those
+        # starting with u. Selection just stops because the parser gets confsed
+        # about the space after "keyword= " and doesn't provide any more auto
+        # complete suggestions. The lines that follow fix this by removing the
+        # space after = from the text, allowing the parser to do its job.
+        if self.doc.char_before_cursor != " ":
+            pos = self.doc.find_backwards('= ')
+            if pos:
+                spos = self.doc.cursor_position + pos + 1
+                epos = self.doc.cursor_position + pos + 2
+                self.doc._text = self.doc._text[:spos] + self.doc._text[epos:]
+                self.doc._cursor_position -= 1
+
         remaining = None
         try:
             parsed = parser.parse(
@@ -135,15 +157,19 @@ class AutoCommandCompletion:
         except parser.CommandParseError as e:
             parsed = e.partial_result
             remaining = e.remaining
+
         # This is a funky but reliable way to figure that last token we are
         # interested in manually parsing, This will return the last key=value
         # including if the value is a 'value', [list], or {dict} or combination
         # of these. This also matches positional arguments.
+
         if self.doc.char_before_cursor in " ]}":
             last_token = ""
         else:
-            last_space = self.doc.find_backwards(" ", in_current_line=True) or -1
-            last_token = self.doc.text[(last_space + 1) :]  # noqa
+            last_space = self.doc.find_backwards(
+                " ", in_current_line=True) or -1
+            last_token = self.doc.text[(last_space + 1):]  # noqa
+
         # We pick the bigger match here. The reason we want to look into
         # remaining is to capture the state that we are in an open list,
         # dictionary, or any other value that may have spaces in it but fails
@@ -163,6 +189,7 @@ class AutoCommandCompletion:
     ) -> Iterable[Completion]:
         assert parsed_command is not None
         args_meta = self.meta.arguments.values()
+        subcommand = None
         # are we expecting a sub command?
         if self.cmd.super_command:
             # We have a sub-command (supposedly)
@@ -185,6 +212,7 @@ class AutoCommandCompletion:
         # positional value.
         # Dissect the last_token and figure what is the right completion
         parsed_token = TokenParse(last_token)
+
         if parsed_token.is_positional:
             # TODO: Handle positional argument completions too
             # To figure which positional we are in right now, we need to run the
@@ -204,14 +232,24 @@ class AutoCommandCompletion:
                 return []
             # We are completing a value, in this case, we need to get the last
             # meaninful piece of the token `x=[Tr` => `Tr`
+            if isinstance(arg.choices, Callable):
+                choices = arg.choices(
+                    self.cmd.metadata.command.name, subcommand, last_token,
+                    self.doc.text)
+                if not isinstance(choices , List):
+                    raise ValueError('autocomplete function MUST provide list of strings'
+                                     f', got {choices}')
+            else:
+                choices = arg.choices
+
             return [
                 Completion(
                     text=str(choice),
                     start_position=-len(parsed_token.last_value),
                 )
-                for choice in arg.choices
-                if str(choice).lower().startswith(parsed_token.last_value.lower())
+                for choice in choices
             ]
+
         # We are completing arguments, or positionals.
         # TODO: We would like to only show positional choices if we exhaust all
         # required arguments. This will make it easier for the user to figure
