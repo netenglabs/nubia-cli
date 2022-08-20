@@ -28,10 +28,10 @@ exclude = '''
 
 [tool.poetry]
 name = "nubia-cli"
-version = "0.2.0"
+version = "0.2.1"
 description = "A fork of Meta's nubia, a framework for building beautiful shells."
 authors = ["Ahmed Soliman <asoli@fb.com>", "Andreas Backx <andreasbackx@fb.com>",
-           "Stardust Dev Team"]
+           "Stardust Systems Dev Team"]
 license = "BSD"
 packages = [
   { include = "nubia" }
