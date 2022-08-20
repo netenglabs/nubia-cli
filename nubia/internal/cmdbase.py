@@ -14,7 +14,7 @@ import sys
 import traceback
 from collections import OrderedDict
 from textwrap import dedent
-from typing import Iterable, Optional
+from typing import Iterable, Optional, Callable
 
 from prompt_toolkit.completion import CompleteEvent, Completion, WordCompleter
 from prompt_toolkit.document import Document
@@ -378,10 +378,10 @@ class AutoCommand(Command):
                     args_dict[key] = new_value
 
             # Validate that arguments with `choices` are supplied with the
-            # acceptable values.
+            # acceptable values. We can't validate dynamic completions yet
             for arg, value in args_dict.items():
                 choices = args_metadata[arg].choices
-                if choices:
+                if choices and not isinstance(choices, Callable):
                     # Validate the choices in the case of values and list of
                     # values.
                     if is_list_type(args_metadata[arg].type):
