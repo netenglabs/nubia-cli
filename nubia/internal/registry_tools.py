@@ -7,6 +7,7 @@
 # LICENSE file in the root directory of this source tree.
 #
 
+from typing import Callable
 import json
 import logging
 from argparse import _SubParsersAction
@@ -32,7 +33,9 @@ def _dump_arguments(arguments):
             output["positionals"].append(
                 {
                     "name": transform_argument_name(arg.name),
-                    "values": list(arg.choices) if arg.choices else None,
+                    "values": list(arg.choices)
+                    if arg.choices and not isinstance(arg.choices, Callable)
+                    else arg.choices,
                 }
             )
         else:
@@ -45,7 +48,9 @@ def _dump_arguments(arguments):
                     ),
                     "default": arg.default_value,
                     "required": not arg.default_value_set,
-                    "values": list(arg.choices) if arg.choices else None,
+                    "values": list(arg.choices)
+                    if arg.choices and not isinstance(arg.choices, Callable)
+                    else arg.choices,
                 }
             )
     return output
