@@ -39,7 +39,7 @@ def is_mapping_type(tp) -> bool:
 def is_iterable_type(tp) -> bool:
     """Checks whether a type is an iterable type."""
     if NEW_TYPING:
-        return tp is Iterable or _is_generic_alias_of(tp, collections.abc.Iterable)
+        return tp is Iterable or tp is List or _is_generic_alias_of(tp, collections.abc.Iterable)
     return issubclass_(tp, list)
 
 
