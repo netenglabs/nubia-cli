@@ -236,19 +236,31 @@ class AutoCommandCompletion:
                 choices = arg.choices(
                     self.cmd.metadata.command.name, subcommand, last_token,
                     self.doc.text)
-                if not isinstance(choices , List):
+                if not isinstance(choices, List):
                     raise ValueError('autocomplete function MUST provide list of strings'
                                      f', got {choices}')
             else:
                 choices = arg.choices
 
-            return [
-                Completion(
-                    text=str(choice),
-                    start_position=-len(parsed_token.last_value),
-                )
-                for choice in choices
-            ]
+            if len(choices) > 10:
+                # Avoid creating slowness or problems when there are too many
+                # choices. Show just the first 10, but the rest are still
+                # available.
+                return [
+                    Completion(
+                        text=str(choice),
+                        start_position=-len(parsed_token.last_value),
+                    )
+                    for choice in choices[:11]
+                ]
+            else:
+                return [
+                    Completion(
+                        text=str(choice),
+                        start_position=-len(parsed_token.last_value),
+                    )
+                    for choice in choices
+                ]
 
         # We are completing arguments, or positionals.
         # TODO: We would like to only show positional choices if we exhaust all
