@@ -23,7 +23,7 @@ def _bool_transform(x):
 
 
 def _str_transform(x):
-    if x and ((x[0] == x[-1] == '"') or (x[0] == x[-1] == '"')):
+    if x and ((x[0] == x[-1] == '"') or (x[0] == x[-1] == "'")):
         return x[1:-1]
     return x
 
