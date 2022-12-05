@@ -54,6 +54,7 @@ class TokenParse:
             assert len(value) == 0
         if len(value) > 0:
             # Let's parse the value, is it a single, list, dict?
+            value = value.strip()
             if value[0] == "[":
                 self._is_list = True
                 value = value.strip("[")
@@ -213,6 +214,7 @@ class AutoCommandCompletion:
         # Dissect the last_token and figure what is the right completion
         parsed_token = TokenParse(last_token)
 
+        ret = []
         if parsed_token.is_positional:
             # TODO: Handle positional argument completions too
             # To figure which positional we are in right now, we need to run the
@@ -236,19 +238,24 @@ class AutoCommandCompletion:
                 choices = arg.choices(
                     self.cmd.metadata.command.name, subcommand, last_token,
                     self.doc.text)
-                if not isinstance(choices , List):
+                if not isinstance(choices, List):
                     raise ValueError('autocomplete function MUST provide list of strings'
                                      f', got {choices}')
             else:
-                choices = arg.choices
+                if parsed_token.last_value:
+                    choices = [c for c in arg.choices
+                               if str(c).startswith(parsed_token.last_value)]
+                else:
+                    choices = arg.choices
 
-            return [
+            ret = [
                 Completion(
                     text=str(choice),
                     start_position=-len(parsed_token.last_value),
                 )
-                for choice in choices
+                for choice in choices[:self.cmd._options.limit_visible_choices]
             ]
+            return ret
 
         # We are completing arguments, or positionals.
         # TODO: We would like to only show positional choices if we exhaust all

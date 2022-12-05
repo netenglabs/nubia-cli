@@ -28,7 +28,7 @@ exclude = '''
 
 [tool.poetry]
 name = "nubia-cli"
-version = "0.2.2"
+version = "0.2.3"
 description = "A fork of Meta's nubia, a framework for building beautiful shells."
 authors = ["Ahmed Soliman <asoli@fb.com>", "Andreas Backx <andreasbackx@fb.com>",
            "Stardust Systems Dev Team"]
@@ -56,8 +56,8 @@ pre-commit = "^2.16.0"
 black = "^22.6.0"
 importmagic = "^0.1.7"
 pylint = "^2.14.5"
-flake8 = "^5.0.4"
 later = "^20.10.1"
+flake8 = "^5.0.4"
 jedi = "^0.18.1"
 rope = "^1.3.0"
 
