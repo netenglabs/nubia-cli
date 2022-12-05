@@ -242,7 +242,11 @@ class AutoCommandCompletion:
                     raise ValueError('autocomplete function MUST provide list of strings'
                                      f', got {choices}')
             else:
-                choices = arg.choices
+                if parsed_token.last_value:
+                    choices = [c for c in arg.choices
+                               if str(c).startswith(parsed_token.last_value)]
+                else:
+                    choices = arg.choices
 
             ret = [
                 Completion(
