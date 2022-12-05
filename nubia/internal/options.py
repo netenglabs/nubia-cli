@@ -29,3 +29,8 @@ class Options:
     #    suggestions
     # If this is set to false it just prints the suggestions
     auto_execute_single_suggestions: bool = True
+
+    # Limit the choices displayed to this number. All choices are available, just
+    # what is displayed is limited to this number to avoid having the user scroll down
+    # a long list.
+    limit_visible_choices: int = 10
