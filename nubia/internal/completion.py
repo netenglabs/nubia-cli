@@ -213,6 +213,7 @@ class AutoCommandCompletion:
         # Dissect the last_token and figure what is the right completion
         parsed_token = TokenParse(last_token)
 
+        ret = []
         if parsed_token.is_positional:
             # TODO: Handle positional argument completions too
             # To figure which positional we are in right now, we need to run the
@@ -242,25 +243,14 @@ class AutoCommandCompletion:
             else:
                 choices = arg.choices
 
-            if len(choices) > 10:
-                # Avoid creating slowness or problems when there are too many
-                # choices. Show just the first 10, but the rest are still
-                # available.
-                return [
-                    Completion(
-                        text=str(choice),
-                        start_position=-len(parsed_token.last_value),
-                    )
-                    for choice in choices[:11]
-                ]
-            else:
-                return [
-                    Completion(
-                        text=str(choice),
-                        start_position=-len(parsed_token.last_value),
-                    )
-                    for choice in choices
-                ]
+            ret = [
+                Completion(
+                    text=str(choice),
+                    start_position=-len(parsed_token.last_value),
+                )
+                for choice in choices[:self.cmd._options.limit_visible_choices]
+            ]
+            return ret
 
         # We are completing arguments, or positionals.
         # TODO: We would like to only show positional choices if we exhaust all
