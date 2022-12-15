@@ -52,9 +52,9 @@ class TokenParse:
             # This is positional, the value is the key
             value = self._key
             assert len(value) == 0
+        value = value.strip()
         if len(value) > 0:
             # Let's parse the value, is it a single, list, dict?
-            value = value.strip()
             if value[0] == "[":
                 self._is_list = True
                 value = value.strip("[")
