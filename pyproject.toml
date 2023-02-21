@@ -28,7 +28,7 @@ exclude = '''
 
 [tool.poetry]
 name = "nubia-cli"
-version = "0.2.3"
+version = "0.2.4"
 description = "A fork of Meta's nubia, a framework for building beautiful shells."
 authors = ["Ahmed Soliman <asoli@fb.com>", "Andreas Backx <andreasbackx@fb.com>",
            "Stardust Systems Dev Team"]
@@ -39,7 +39,7 @@ packages = [
 include = ["LICENSE"]
 
 [tool.poetry.dependencies]
-python = ">3.7.2,<3.10"
+python = ">3.7.2,<3.11"
 jellyfish = "^0.8.9"
 prettytable = "^2.4.0"
 prompt-toolkit = "^3.0.23"
