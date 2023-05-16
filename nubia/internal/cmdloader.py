@@ -6,6 +6,7 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 #
+from importlib import import_module
 import pkgutil
 import types
 import typing as t
@@ -23,7 +24,7 @@ def _walk_module(module: types.ModuleType):
 def _walk_package(name, path) -> t.List[types.FunctionType]:
     packages = pkgutil.walk_packages(path, prefix=f"{name}.")
     for importer, modname, ispkg in packages:
-        loaded = importer.find_module(modname).load_module(modname)
+        loaded = import_module(modname)
         if not ispkg:
             yield from _walk_module(loaded)
 

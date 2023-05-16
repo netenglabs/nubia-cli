@@ -154,6 +154,11 @@ def _apply_dict_type(value, key_type=None, value_type=None):
     if not key_type and not value_type:
         return dict(value)
 
+    if not isinstance(value, dict):
+        raise ValueError(
+            "Cannot convert {} to dictionary".format(value)
+        )
+
     key_type = key_type or _identity_function
     value_type = value_type or _identity_function
     return {key_type(key): value_type(value) for key, value in value.items()}
