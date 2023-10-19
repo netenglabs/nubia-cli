@@ -62,8 +62,10 @@ following example achieves the exact same result as the example above:
 
 from collections import OrderedDict, namedtuple
 from collections.abc import Container
+from dataclasses import dataclass
 from functools import partial
 from inspect import isclass, ismethod
+from typing import List
 
 from termcolor import cprint
 
@@ -81,7 +83,13 @@ Argument = namedtuple(
     "name extra_names positional choices",
 )
 
-Command = namedtuple("Command", "name help aliases exclusive_arguments")
+@dataclass
+class Command:
+    """In place of named tuple for Command"""
+    name: str
+    help: str
+    aliases: List[str]
+    exclusive_arguments: List[str]
 
 FunctionInspection = namedtuple("FunctionInspection", "arguments command subcommands")
 _ArgDecoratorSpec = namedtuple(

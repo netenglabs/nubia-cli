@@ -6,15 +6,15 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 #
+from __future__ import annotations
 
-import asyncio
 import copy
 import inspect
 import sys
 import traceback
 from collections import OrderedDict
 from textwrap import dedent
-from typing import Iterable, Optional, Callable
+from typing import TYPE_CHECKING, Callable, Iterable, Optional
 
 from prompt_toolkit.completion import CompleteEvent, Completion, WordCompleter
 from prompt_toolkit.document import Document
@@ -23,21 +23,18 @@ from termcolor import cprint
 from nubia.internal import parser
 from nubia.internal.completion import AutoCommandCompletion
 from nubia.internal.exceptions import CommandParseError
-from nubia.internal.helpers import (
-    find_approx,
-    function_to_str,
-    suggestions_msg,
-    try_await,
-)
+from nubia.internal.helpers import (find_approx, function_to_str,
+                                    suggestions_msg, try_await)
 from nubia.internal.options import Options
 from nubia.internal.typing import FunctionInspection, inspect_object
-from nubia.internal.typing.argparse import (
-    get_arguments_for_command,
-    get_arguments_for_inspection,
-    register_command,
-)
+from nubia.internal.typing.argparse import (get_arguments_for_command,
+                                            get_arguments_for_inspection,
+                                            register_command)
 from nubia.internal.typing.builder import apply_typing
 from nubia.internal.typing.inspect import is_list_type
+
+if TYPE_CHECKING:
+    from nubia.internal.registry import CommandsRegistry
 
 from . import context
 
@@ -49,14 +46,14 @@ class Command:
     """
 
     def __init__(self):
-        self._command_registry = None
-        self._built_in = False
+        self._command_registry: Optional[CommandsRegistry] = None
+        self._built_in: bool = False
 
     @property
     def built_in(self) -> bool:
         return self._built_in
 
-    def set_command_registry(self, command_registry):
+    def set_command_registry(self, command_registry: CommandsRegistry):
         self._command_registry = command_registry
 
     async def run_interactive(self, cmd, args, raw):

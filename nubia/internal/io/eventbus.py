@@ -20,7 +20,7 @@ class Message:
 
 
 class Listener:
-    async def react(self, msg, *args, **kwargs):
+    async def react(self, msg: Message, *args, **kwargs):
         if msg == Message.CONNECTED:
             try:
                 await try_await(self.on_connected(*args, **kwargs))

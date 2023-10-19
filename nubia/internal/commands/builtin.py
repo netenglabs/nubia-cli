@@ -31,6 +31,7 @@ class Connect(Command):
         return await self._run()
 
     async def _run(self):
+        assert self._command_registry
         await self._command_registry.dispatch_message(Message.CONNECTED)
         return 0
 

@@ -12,7 +12,7 @@ import getpass
 import os
 import sys
 from threading import RLock
-from typing import List, Tuple, Any
+from typing import List, Optional, Tuple, Any
 
 from nubia.internal.io.eventbus import Listener
 from pygments.token import Token
@@ -111,8 +111,9 @@ class Context(Listener):
 
 
 # This is set by LDShell class on constructor.
-_ctx = None
+_ctx: Optional[Context] = None
 
 
-def get_context():
+def get_context() -> Context:
+    assert _ctx
     return _ctx

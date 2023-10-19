@@ -8,8 +8,18 @@
 #
 
 
+from pyparsing import ParseResults
+
+
 class CommandParseError(Exception):
-    pass
+
+    def __init__(self, msg, remaining: str, partial_result: ParseResults,
+                 col: int, *args, **kwargs):
+        self.remaining = remaining
+        self.partial_result = partial_result
+        self.col = col
+        super().__init__(msg, *args, **kwargs)
+
 
 
 class CommandError(Exception):

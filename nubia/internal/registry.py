@@ -7,6 +7,8 @@
 # LICENSE file in the root directory of this source tree.
 #
 
+from typing import List
+
 from prompt_toolkit.completion import WordCompleter
 from termcolor import cprint
 
@@ -26,8 +28,7 @@ class CommandsRegistry:
         self._completer = WordCompleter([], ignore_case=True, sentence=True)
         # maps a command to Command Instance
         self._cmd_instance_map = {}
-        # objects interested in receiving messages
-        self._listeners = []
+        self._listeners: List[Listener] = []
         # argparser so each command can add its options
         self._parser = parser
 
