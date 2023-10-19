@@ -87,7 +87,7 @@ dict_value << pp.Group(
 # instead of parsing this as positional "something" and leaving the "=" as
 # invalid on its own.
 positionals = pp.ZeroOrMore(
-    value + (pp.StringEnd() ^ pp.Suppress(pp.OneOrMore(pp.White())))
+    value + (pp.StringEnd() | pp.Suppress(pp.OneOrMore(pp.White())) )
 ).setResultsName("positionals")
 
 key_value = pp.Dict(
@@ -108,13 +108,13 @@ command = key_value + positionals
 def parse(text: str, expect_subcommand: bool) -> pp.ParseResults:
     expected_pattern = command_with_subcommand if expect_subcommand else command
     try:
-        result = expected_pattern.parseString(text, parseAll=True)
+        result = expected_pattern.parse_string(text, parseAll=True)
         return result
     except pp.ParseException as e:
-        exception = CommandParseError(str(e))
-        remaining = e.markInputline()
-        partial_result = expected_pattern.parseString(text, parseAll=False)
-        exception.remaining = remaining[(remaining.find(">!<") + 3) :]
-        exception.partial_result = partial_result
-        exception.col = e.col
-        raise exception
+        remaining = e.mark_input_line()
+        raise CommandParseError(
+            str(e),
+            remaining=remaining[(remaining.find(">!<") + 3) :],
+            partial_result=expected_pattern.parse_string(text, parseAll=False),
+            col=e.col
+        )

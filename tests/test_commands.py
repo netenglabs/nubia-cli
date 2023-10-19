@@ -8,8 +8,8 @@
 #
 
 from typing import List, Optional
+from unittest import IsolatedAsyncioTestCase as TestCase
 
-from later.unittest import TestCase
 from termcolor import cprint
 
 from nubia import argument, command, deprecated
@@ -36,7 +36,7 @@ class CommandSpecTest(TestCase):
             Sample Docstring
             """
             self.assertEqual(["a", "b"], arg)
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return 22
 
         shell = TestShell(commands=[test_command])
@@ -64,7 +64,7 @@ class CommandSpecTest(TestCase):
             Sample Docstring
             """
             self.assertEqual(["a", "b"], arg)
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return 22
 
         shell = TestShell(commands=[test_command])
@@ -86,7 +86,7 @@ class CommandSpecTest(TestCase):
             Sample Docstring
             """
             self.assertEqual(["a", "b"], arg)
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return 22
 
         shell = TestShell(commands=[test_command])
@@ -109,7 +109,7 @@ class CommandSpecTest(TestCase):
             Sample Docstring
             """
             self.assertEqual(["a", "b"], arg)
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return 22
 
         shell = TestShell(commands=[test_command])
@@ -126,7 +126,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return arg
 
         @command("command_second", aliases=["second"])
@@ -135,7 +135,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return arg
 
         shell = TestShell(commands=[test_command_1, test_command_2])
@@ -165,7 +165,7 @@ class CommandSpecTest(TestCase):
     async def test_no_type_works_the_same(self):
         @command
         @argument("arg", positional=True)
-        async def test_command(arg: str) -> int:
+        async def test_dummy_command(arg: str) -> int:
             """
             Sample Docstring
             """
@@ -173,10 +173,10 @@ class CommandSpecTest(TestCase):
             self.assertEqual("1", arg)
             return 64 + int(arg)
 
-        shell = TestShell(commands=[test_command])
-        self.assertEqual(65, await shell.run_cli_line("test_shell test-command 1"))
-        self.assertEqual(65, await shell.run_interactive_line("test-command 1"))
-        self.assertEqual(65, await shell.run_interactive_line('test-command "1"'))
+        shell = TestShell(commands=[test_dummy_command])
+        self.assertEqual(65, await shell.run_cli_line("test_shell test-dummy-command 1"))
+        self.assertEqual(65, await shell.run_interactive_line("test-dummy-command 1"))
+        self.assertEqual(65, await shell.run_interactive_line('test-dummy-command "1"'))
 
         @command
         @argument("arg")
@@ -201,7 +201,7 @@ class CommandSpecTest(TestCase):
             await shell.run_interactive_line('test-command arg="1"'),
         )
 
-    async def test_command_with_postional(self):
+    async def test_command_with_positional(self):
         @command
         @argument("arg1", positional=True)
         @argument("arg2", positional=True)
@@ -210,7 +210,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint([arg1, arg2])
+            cprint(str([arg1, arg2]))
             self.assertEqual("1", arg1)
             self.assertIsInstance(arg1, str)
             self.assertEqual("2", arg2)
@@ -227,7 +227,7 @@ class CommandSpecTest(TestCase):
     async def test_command_with_extra_spaces(self):
         @command
         @argument("arg1", positional=True)
-        async def test_command(arg1: str) -> None:
+        async def test_command(arg1: str) -> bool:
             """
             Sample Docstring
             """
@@ -245,7 +245,7 @@ class CommandSpecTest(TestCase):
         self.assertTrue(await shell.run_interactive_line("test-command 1  "))
         self.assertTrue(await shell.run_interactive_line("  test-command  1  "))
 
-    async def test_command_with_postional_and_named_arguments(self):
+    async def test_command_with_positional_and_named_arguments(self):
         @command
         @argument("arg2", positional=True)
         @argument("arg3", positional=True)
@@ -253,7 +253,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint([arg1, arg2])
+            cprint(str([arg1, arg2]))
             self.assertEqual("1", arg1)
             self.assertIsInstance(arg1, str)
             self.assertEqual("2", arg2)
@@ -340,7 +340,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return arg
 
         shell = TestShell(commands=[test_command])
@@ -359,7 +359,7 @@ class CommandSpecTest(TestCase):
             Sample Docstring
             """
             arg = arg or ["42"]
-            cprint(arg, "green")
+            cprint(str(arg), "green")
             return sum(int(x) for x in arg)
 
         shell = TestShell(commands=[test_command])
@@ -385,7 +385,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint(arg1, "green")
+            cprint(str(arg1), "green")
             return arg1 + arg2
 
         shell = TestShell(commands=[test_command])

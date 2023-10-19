@@ -9,7 +9,7 @@
 
 import unittest
 
-from later.unittest import TestCase
+from unittest import IsolatedAsyncioTestCase as TestCase
 
 from nubia import command
 from tests.util import TestShell

@@ -28,9 +28,9 @@ class HelpersTest(unittest.TestCase):
             self.assertEqual(function_to_str(foo, with_module, with_args), expected)
 
         test("foo", False, False)
-        test("tests.helpers_test.foo", True, False)
+        test("tests.test_helpers.foo", True, False)
         test("foo(arg1, arg2, *args, **kwargs)", False, True)
-        test("tests.helpers_test.foo(arg1, arg2, *args, **kwargs)", True, True)
+        test("tests.test_helpers.foo(arg1, arg2, *args, **kwargs)", True, True)
 
     def test_catchall(self):
         def raise_generic_error():

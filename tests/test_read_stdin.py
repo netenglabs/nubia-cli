@@ -10,7 +10,7 @@ import os
 import sys
 import tempfile
 
-from later.unittest import TestCase
+from unittest import IsolatedAsyncioTestCase as TestCase
 
 from nubia import argument, command
 from tests.util import TestShell
