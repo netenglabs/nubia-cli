@@ -21,18 +21,6 @@ wrapt = [
 ]
 
 [[package]]
-name = "async-timeout"
-version = "4.0.2"
-description = "Timeout context manager for asyncio programs"
-category = "dev"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "async-timeout-4.0.2.tar.gz", hash = "sha256:2163e1640ddb52b7a8c80d0a67a08587e5d245cc9c553a74a847056bc2976b15"},
-    {file = "async_timeout-4.0.2-py3-none-any.whl", hash = "sha256:8ca1e4fcf50d07413d66d1a5e416e42cfdf5851c981d679a09851a6853383b3c"},
-]
-
-[[package]]
 name = "black"
 version = "22.12.0"
 description = "The uncompromising code formatter."
@@ -489,21 +477,6 @@ files = [
     {file = "jellyfish-0.11.2-pp39-pypy39_pp73-musllinux_1_1_x86_64.whl", hash = "sha256:ed39ff56c19a4150f412b63e9835354c929f3d8108c586d604cc1c342f0ca34c"},
     {file = "jellyfish-0.11.2.tar.gz", hash = "sha256:654f2b1543b9927c4429bd5d66f98d1f47e6eb9a4e56212e1907fb4eea258c5a"},
 ]
-
-[[package]]
-name = "later"
-version = "23.3.1"
-description = "A toolbox for asyncio services"
-category = "dev"
-optional = false
-python-versions = ">3.7"
-files = [
-    {file = "later-23.3.1-py3-none-any.whl", hash = "sha256:beb197d57f596a657c507d86d47fa8542c1b5bf6096894b61692c6da2c04db1c"},
-    {file = "later-23.3.1.tar.gz", hash = "sha256:0456f06ef5cc874a6d998bca90c1d9fab253f77f892c07da73668c8f72d72f92"},
-]
-
-[package.dependencies]
-async-timeout = ">=2.0.0,<5.0.0"
 
 [[package]]
 name = "lazy-object-proxy"
@@ -1230,4 +1203,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">3.8,<3.12"
-content-hash = "4beaa0adf4e0a7091bd4a0f0a61975a6ab7e527ffe6d6373bbedeb79e26c34fb"
+content-hash = "bf9e2d9debea7681a7b48924cc1a6292f25872cbe2a0f104e1104506fa219a47"
