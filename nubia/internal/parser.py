@@ -82,27 +82,27 @@ dict_value << pp.Group(
     pp.Suppress("{") + pp.delimitedList(dict_key_value) + pp.Suppress("}")
 ).setParseAction(_parse_type("dict"))
 
+key_value = pp.Dict(
+    pp.ZeroOrMore(pp.Group(identifier + pp.Suppress("=") + value))
+).setResultsName("kv")
+
 # Positionals must be end of line or has a space (or more) afterwards.
 # This is to ensure that the parser treats text like "something=" as invalid
 # instead of parsing this as positional "something" and leaving the "=" as
 # invalid on its own.
 positionals = pp.ZeroOrMore(
-    value + (pp.StringEnd() ^ pp.Suppress(pp.OneOrMore(pp.White())))
+    single_value + pp.NotAny('=')
 ).setResultsName("positionals")
-
-key_value = pp.Dict(
-    pp.ZeroOrMore(pp.Group(identifier + pp.Suppress("=") + value))
-).setResultsName("kv")
 
 subcommand = identifier.setResultsName("__subcommand__")
 
 # Subcommand is optional here as it maybe missing, in this case we still want to
 # pass the parsing and we will handle the fact that the subcommand is missing
 # while validating the arguments
-command_with_subcommand = pp.Optional(subcommand) + key_value + positionals
+command_with_subcommand = pp.Optional(subcommand) + positionals + key_value
 
 # Positionals will be passed as the last argument
-command = key_value + positionals
+command = positionals + key_value
 
 
 def parse(text: str, expect_subcommand: bool) -> pp.ParseResults:
