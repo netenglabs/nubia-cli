@@ -78,14 +78,14 @@ Argument = namedtuple(
     "Argument",
     "arg description type "
     "default_value_set default_value "
-    "name extra_names positional choices",
+    "name extra_names positional choices nargs",
 )
 
 Command = namedtuple("Command", "name help aliases exclusive_arguments")
 
 FunctionInspection = namedtuple("FunctionInspection", "arguments command subcommands")
 _ArgDecoratorSpec = namedtuple(
-    "_ArgDecoratorSpec", "arg name aliases description positional choices"
+    "_ArgDecoratorSpec", "arg name aliases description positional choices nargs"
 )
 
 
@@ -97,6 +97,7 @@ def _empty_arg_decorator_spec(arg):
         description=None,
         positional=False,
         choices=None,
+        nargs=1,
     )
 
 
@@ -118,6 +119,7 @@ def argument(
     aliases=None,
     positional=False,
     choices=None,
+    nargs=1,
 ):
     """
     Annotation decorator to specify metadata for an argument
@@ -179,6 +181,7 @@ def argument(
             aliases=aliases or [],
             positional=positional,
             choices=choices or [],
+            nargs=nargs,
         )
 
         return function
@@ -287,6 +290,7 @@ def inspect_object(obj, accept_bound_methods=False):
             extra_names=arg_decor_spec.aliases,
             positional=arg_decor_spec.positional,
             choices=arg_decor_spec.choices,
+            nargs=arg_decor_spec.nargs,
         )
     if argspec.varkw:
         # We will inject all the arguments that are not defined explicitly in
@@ -305,6 +309,7 @@ def inspect_object(obj, accept_bound_methods=False):
                     extra_names=arg_decor_spec.aliases,
                     positional=arg_decor_spec.positional,
                     choices=arg_decor_spec.choices,
+                    nargs=arg_decor_spec.nargs,
                 )
 
     # Super Command Support
