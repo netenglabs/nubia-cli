@@ -290,7 +290,7 @@ def inspect_object(obj, accept_bound_methods=False):
             extra_names=arg_decor_spec.aliases,
             positional=arg_decor_spec.positional,
             choices=arg_decor_spec.choices,
-            nargs=arg_decor_spec.nargs,
+            nargs=getattr(arg_decor_spec, 'nargs', 1),
         )
     if argspec.varkw:
         # We will inject all the arguments that are not defined explicitly in
@@ -309,7 +309,7 @@ def inspect_object(obj, accept_bound_methods=False):
                     extra_names=arg_decor_spec.aliases,
                     positional=arg_decor_spec.positional,
                     choices=arg_decor_spec.choices,
-                    nargs=arg_decor_spec.nargs,
+                    nargs=getattr(arg_decor_spec, 'nargs', 1),
                 )
 
     # Super Command Support
