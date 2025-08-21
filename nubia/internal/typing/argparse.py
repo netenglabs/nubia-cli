@@ -218,6 +218,19 @@ def _argument_to_argparse_input(arg: "Any") -> "Tuple[List, Dict[str, Any]]":
     else:
         add_argument_kwargs["type"] = argument_type
 
+    # Handle custom nargs parameter
+    if hasattr(arg, 'nargs') and arg.nargs == -1:
+        add_argument_kwargs["nargs"] = "+"
+        if argument_type == str:
+            # For nargs=-1 with string type, join arguments into single string
+
+            def join_strings(values):
+                if isinstance(values, list):
+                    return " ".join(str(v) for v in values)
+                return str(values)
+
+            add_argument_kwargs["type"] = join_strings
+
     if arg.choices:
         add_argument_kwargs["choices"] = arg.choices
         if not isinstance(arg.choices, Callable):

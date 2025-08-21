@@ -286,7 +286,13 @@ class AutoCommand(Command):
                 args_metadata, args_dict.keys()
             )
 
-            if len(positionals) > len(can_be_positional):
+            # Check if we have arguments with nargs=-1 that can consume multiple positionals
+            nargs_unlimited = any(
+                hasattr(arg, 'nargs') and arg.nargs == -1
+                for arg in can_be_positional.values()
+            )
+
+            if len(positionals) > len(can_be_positional) and not nargs_unlimited:
                 if len(can_be_positional) == 0:
                     err = "This command does not support positional arguments"
                 else:
@@ -303,10 +309,19 @@ class AutoCommand(Command):
                     )
                 cprint(err, "red")
                 return 2
-            # constuct key_value dict from positional arguments.
-            args_from_positionals = {
-                key: value for value, key in zip(positionals, can_be_positional)
-            }
+            # construct key_value dict from positional arguments.
+            args_from_positionals = {}
+            if nargs_unlimited:
+                # Handle nargs=-1: assign all positionals as a list to the parameter
+                if can_be_positional and positionals:
+                    first_param = next(iter(can_be_positional.keys()))
+                    # For nargs=-1, pass all positionals as a list
+                    args_from_positionals[first_param] = positionals
+            else:
+                # Normal case: one positional per parameter
+                args_from_positionals = {
+                    key: value for value, key in zip(positionals, can_be_positional)
+                }
             # update the total arguments dict with the positionals
             args_dict.update(args_from_positionals)
 
