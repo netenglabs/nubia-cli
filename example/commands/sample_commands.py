@@ -69,6 +69,7 @@ def double(number):
     cprint("Type of input is {}".format(type(number)))
     cprint("{} * 2 = {}".format(number, number * 2))
 
+
 @command
 @argument("number", type=int, positional=True)
 @argument("text", type=str)
@@ -77,6 +78,7 @@ def pos_and_kv(number: int, text: str = ''):
     cprint("Input is {}".format(number))
     cprint(f"The text is {text}")
 
+
 @command
 @argument("number", type=int, positional=True)
 @argument("text", type=str, positional=True)
@@ -84,6 +86,7 @@ def multipos(number: int, text: str):
     "Muliple positional args"
     cprint(f"number is {number}")
     cprint(f"The text is {text}")
+
 
 @command
 @argument("number", type=int, positional=True)
@@ -96,6 +99,7 @@ def multipos_and_kv(number: int, text: str, mylist=None, mydict=None):
     cprint(f"The text is {text}")
     cprint(f'mylist is {mylist}')
     cprint(f'mydict is {mydict}')
+
 
 @command("be-blocked")
 def be_blocked():
@@ -116,6 +120,15 @@ def pick(style: str, stuff: typing.List[str], code: int):
     """
     cprint("Style is '{}' code is {}".format(style, code), "yellow")
 
+
+@command
+@argument("text", positional=True, nargs=-1)
+def ask(text: typing.List[str]):
+    """positional argument that accepts infinite list of strings"""
+    # More efficient: use shlex.quote() which handles all edge cases
+    import shlex
+    formatted_text = " ".join(shlex.quote(s) for s in text)
+    cprint(f'Got strings: {formatted_text}')
 
 # instead of replacing _ we rely on camelcase to - super-command
 
