@@ -25,6 +25,8 @@ class Context(Listener):
         self._testing = None
         self._registry = None
         self._args = {}
+        self._cmd: str = ''   # the command being executed
+        self._raw_cmd: str = '' # the cmd and all args as typed by the user
 
     def set_binary_name(self, name):
         self._binary_name = name
@@ -71,6 +73,30 @@ class Context(Listener):
     def args(self):
         with self._lock:
             return self._args
+
+    @property
+    def cmd(self) -> str:
+        """Get the current command name."""
+        with self._lock:
+            return self._cmd
+
+    @cmd.setter
+    def cmd(self, value: str) -> None:
+        """Set the current command name."""
+        with self._lock:
+            self._cmd = value
+
+    @property
+    def raw_cmd(self) -> str:
+        """Get the raw command string."""
+        with self._lock:
+            return self._raw_cmd
+
+    @raw_cmd.setter
+    def raw_cmd(self, value: str) -> None:
+        """Set the raw command string."""
+        with self._lock:
+            self._raw_cmd = value
 
     @property
     def isatty(self):
