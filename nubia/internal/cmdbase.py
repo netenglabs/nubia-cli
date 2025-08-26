@@ -422,7 +422,8 @@ class AutoCommand(Command):
             try:
                 # convert argument names back to match the function signature
                 args_dict = {args_metadata[k].arg: v for k, v in args_dict.items()}
-
+                ctx.cmd = cmd
+                ctx.raw_cmd = raw
                 ret = await try_await(fn(**args_dict))
                 ctx.set_verbose(old_verbose)
             except Exception as e:
