@@ -14,6 +14,7 @@ import typing
 from termcolor import cprint
 
 from nubia import argument, command, context
+from nubia.internal.typing import validate_mac_address
 
 
 @command(aliases=["lookup"])
@@ -160,3 +161,37 @@ class SuperCommand:
         doing stuff
         """
         cprint("stuff={}, shared={}".format(stuff, self.shared))
+
+
+@command
+@argument("mac", type=validate_mac_address, description="MAC address (supports both : and . formats, plus regex patterns)")
+def test_mac(mac):
+    """
+    Test command for MAC address parsing without quotes.
+    
+    Examples:
+    - test_mac 00:01:21:ab:cd:8f
+    - test_mac 1234.abcd.5678
+    - test_mac ~12:34.*
+    - test_mac !~abcd.*
+    """
+    cprint(f"Received MAC address: {mac}", "green")
+    cprint(f"Type: {type(mac)}", "yellow")
+    return 0
+
+
+@command
+@argument("mac", type=validate_mac_address, positional=True, description="MAC address as positional argument")
+def test_mac_pos(mac):
+    """
+    Test command for MAC address parsing as positional argument.
+    
+    Examples:
+    - test_mac_pos 00:01:21:ab:cd:8f
+    - test_mac_pos 1234.abcd.5678
+    - test_mac_pos ~12:34.*
+    - test_mac_pos !~abcd.*
+    """
+    cprint(f"Received MAC address: {mac}", "green")
+    cprint(f"Type: {type(mac)}", "yellow")
+    return 0

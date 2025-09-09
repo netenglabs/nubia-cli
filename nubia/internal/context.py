@@ -26,7 +26,7 @@ class Context(Listener):
         self._registry = None
         self._args = {}
         self._cmd: str = ''   # the command being executed
-        self._raw_cmd: str = '' # the cmd and all args as typed by the user
+        self._raw_cmd: str = ''  # the cmd and all args as typed by the user
 
     def set_binary_name(self, name):
         self._binary_name = name

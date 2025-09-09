@@ -83,7 +83,8 @@ Argument = namedtuple(
 
 Command = namedtuple("Command", "name help aliases exclusive_arguments")
 
-FunctionInspection = namedtuple("FunctionInspection", "arguments command subcommands")
+FunctionInspection = namedtuple(
+    "FunctionInspection", "arguments command subcommands")
 _ArgDecoratorSpec = namedtuple(
     "_ArgDecoratorSpec", "arg name aliases description positional choices nargs"
 )
@@ -152,7 +153,8 @@ def argument(
         if current_type and type and current_type != type:
             raise TypeError(
                 "Argument {} in {} is both specified as {} "
-                "and {}".format(arg, function_to_str(function), current_type, type)
+                "and {}".format(arg, function_to_str(
+                    function), current_type, type)
             )
 
         if arg in function.__arguments_decorator_specs:
@@ -169,7 +171,8 @@ def argument(
 
         # reject positional=True if we are applied over a class
         if isclass(function) and positional:
-            raise ValueError("Cannot set positional arguments for super commands")
+            raise ValueError(
+                "Cannot set positional arguments for super commands")
 
         # We use __annotations__ to allow the usage of python 3 typing
         function.__annotations__.setdefault(arg, type)
@@ -200,7 +203,8 @@ def command(name_or_function=None, help=None, aliases=None, exclusive_arguments=
 
     def decorator(function, name=None):
         is_supercommand = isclass(name_or_function)
-        exclusive_arguments_ = _normalize_exclusive_arguments(exclusive_arguments)
+        exclusive_arguments_ = _normalize_exclusive_arguments(
+            exclusive_arguments)
         _validate_exclusive_arguments(function, exclusive_arguments_)
 
         _init_attr(function, "__command", {})
@@ -266,7 +270,8 @@ def inspect_object(obj, accept_bound_methods=False):
         arg_idx_with_default = len(args) - len(argspec.defaults)
         default_value_set = bool(argspec.defaults and i >= arg_idx_with_default)
         default_value = (
-            argspec.defaults[i - arg_idx_with_default] if default_value_set else None
+            argspec.defaults[i -
+                             arg_idx_with_default] if default_value_set else None
         )
         # We will reject classes (super-commands) that has required arguments to
         # reduce complexity
@@ -274,7 +279,8 @@ def inspect_object(obj, accept_bound_methods=False):
             raise ValueError(
                 "Cannot accept super commands that has required "
                 "arguments with no default value "
-                "like '{}' in super-command '{}'".format(arg, result["command"].name)
+                "like '{}' in super-command '{}'".format(
+                    arg, result["command"].name)
             )
         arg_decor_spec = arguments_decorator_specs.get(
             arg, _empty_arg_decorator_spec(arg)
@@ -413,3 +419,63 @@ def _validate_exclusive_arguments(function, normalized_exclusive_arguments):
             "group: {}".format(", ".join(repeated_args))
         )
         raise ValueError(msg)
+
+
+def validate_mac_address(value):
+    """
+    Validates MAC address patterns including traditional formats and regex patterns.
+
+    Supports:
+    - Traditional MAC formats: 00:01:21:ab:cd:8f, 1234.abcd.5678
+    - Regex patterns: ~12:34.*, !~abcd.*
+    - Any string containing colons or dots (basic MAC-like pattern)
+
+    Args:
+        value: String to validate as MAC address
+
+    Returns:
+        str: The input value if it appears to be a valid MAC pattern
+
+    Note:
+        This function is lenient and will show warnings for invalid formats
+        but will not fail. It maintains backward compatibility with quoted
+        MAC addresses.
+    """
+    import re
+    import warnings
+
+    if not isinstance(value, str):
+        return str(value)
+
+    # Check for regex patterns
+    if value.startswith('~') or value.startswith('!~'):
+        # This looks like a regex pattern, accept it
+        return value
+
+    # Check for traditional MAC address patterns
+    # Pattern 1: XX:XX:XX:XX:XX:XX (6 groups of 2 hex digits separated by colons)
+    colon_pattern = r'^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$'
+    # Pattern 2: XXXX.XXXX.XXXX (3 groups of 4 hex digits separated by dots)
+    dot_pattern = r'^([0-9a-fA-F]{4}\.){2}[0-9a-fA-F]{4}$'
+
+    if re.match(colon_pattern, value) or re.match(dot_pattern, value):
+        return value
+
+    # Check if it contains colons or dots (basic MAC-like pattern)
+    if ':' in value or '.' in value:
+        # Issue a warning but don't fail
+        warnings.warn(
+            f"MAC address '{value}' doesn't match standard formats "
+            f"(XX:XX:XX:XX:XX:XX or XXXX.XXXX.XXXX) but contains MAC-like separators. "
+            f"Proceeding with value as-is.",
+            UserWarning
+        )
+        return value
+
+    # If it doesn't look like a MAC address at all, issue a warning
+    warnings.warn(
+        f"Value '{value}' doesn't appear to be a MAC address pattern. "
+        f"Expected formats: XX:XX:XX:XX:XX:XX, XXXX.XXXX.XXXX, or regex patterns like ~pattern",
+        UserWarning
+    )
+    return value
