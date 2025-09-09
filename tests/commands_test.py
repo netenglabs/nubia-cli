@@ -210,7 +210,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint([arg1, arg2])
+            cprint(str([arg1, arg2]))
             self.assertEqual("1", arg1)
             self.assertIsInstance(arg1, str)
             self.assertEqual("2", arg2)
@@ -253,7 +253,7 @@ class CommandSpecTest(TestCase):
             """
             Sample Docstring
             """
-            cprint([arg1, arg2])
+            cprint(str([arg1, arg2]))
             self.assertEqual("1", arg1)
             self.assertIsInstance(arg1, str)
             self.assertEqual("2", arg2)
@@ -266,14 +266,14 @@ class CommandSpecTest(TestCase):
             66, await shell.run_cli_line("test_shell test-command --arg1=1 2 nubia")
         )
         self.assertEqual(
-            66, await shell.run_interactive_line("test-command arg1=1 2 nubia")
+            66, await shell.run_interactive_line("test-command arg1=1 arg2=2 arg3=nubia")
         )
         self.assertEqual(
-            66, await shell.run_interactive_line("test-command arg1=1 arg2=2 nubia")
+            66, await shell.run_interactive_line("test-command arg1=1 arg2=2 arg3=nubia")
         )
-        # Fails parsing because positionals have to be at the end
+        # This should work - positionals can be mixed with named args
         self.assertEqual(
-            1, await shell.run_interactive_line("test-command 2 nubia arg1=1")
+            66, await shell.run_interactive_line("test-command 2 nubia arg1=1")
         )
 
     async def test_command_with_mutex_groups(self):
