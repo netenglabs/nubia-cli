@@ -11,14 +11,14 @@ import sys
 
 from nubia_plugin import NubiaExamplePlugin
 
-import example.commands
+import commands
 from nubia import Nubia, Options
 
 if __name__ == "__main__":
     plugin = NubiaExamplePlugin()
     shell = Nubia(
         name="nubia_example",
-        command_pkgs=example.commands,
+        command_pkgs=commands,
         plugin=plugin,
         options=Options(
             persistent_history=False, auto_execute_single_suggestions=False
