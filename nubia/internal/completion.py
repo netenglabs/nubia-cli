@@ -243,8 +243,13 @@ class AutoCommandCompletion:
                                      f', got {choices}')
             else:
                 if parsed_token.last_value:
+                    # Import the pattern matching function
+                    from nubia.internal.helpers import matches_choice_pattern
+
+                    # Filter choices based on pattern matching
                     choices = [c for c in arg.choices
-                               if str(c).startswith(parsed_token.last_value)]
+                               if matches_choice_pattern(parsed_token.last_value, [str(c)]) or
+                               str(c).startswith(parsed_token.last_value)]
                 else:
                     choices = arg.choices
 
