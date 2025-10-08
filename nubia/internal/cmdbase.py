@@ -264,7 +264,8 @@ class AutoCommand(Command):
                         return 2
 
                 sub_inspection = self.subcommand_metadata(subcommand)
-                instance, remaining_args = self._create_subcommand_obj(args_dict)
+                instance, remaining_args = self._create_subcommand_obj(
+                    args_dict)
                 assert instance
                 args_dict = remaining_args
                 key_values = copy.copy(args_dict)
@@ -276,7 +277,8 @@ class AutoCommand(Command):
             else:
                 # not a super-command, use use the function instead
                 fn = self._fn
-            positionals = parsed_dict["positionals"] if parsed.positionals != "" else []
+            positionals = parsed_dict["positionals"] if parsed.positionals != "" else [
+            ]
             # We only allow positionals for arguments that have positional=True
             # ِ We filter out the OrderedDict this way to ensure we don't lose the
             # order of the arguments. We also filter out arguments that have
@@ -397,10 +399,14 @@ class AutoCommand(Command):
             for arg, value in args_dict.items():
                 choices = args_metadata[arg].choices
                 if choices and not isinstance(choices, Callable):
+                    # Import the pattern matching function
+                    from nubia.internal.helpers import matches_choice_pattern
+
                     # Validate the choices in the case of values and list of
                     # values.
                     if is_list_type(args_metadata[arg].type):
-                        bad_inputs = [v for v in value if v not in choices]
+                        bad_inputs = [
+                            v for v in value if not matches_choice_pattern(str(v), choices)]
                         if bad_inputs:
                             cprint(
                                 f"Argument '{arg}' got an unexpected "
@@ -409,7 +415,7 @@ class AutoCommand(Command):
                                 "red",
                             )
                             return 4
-                    elif value not in choices:
+                    elif not matches_choice_pattern(str(value), choices):
                         cprint(
                             f"Argument '{arg}' got an unexpected value "
                             f"'{value}'. Expected one of "
@@ -421,7 +427,8 @@ class AutoCommand(Command):
             # arguments appear to be fine, time to run the function
             try:
                 # convert argument names back to match the function signature
-                args_dict = {args_metadata[k].arg: v for k, v in args_dict.items()}
+                args_dict = {
+                    args_metadata[k].arg: v for k, v in args_dict.items()}
                 ctx.cmd = cmd
                 ctx.raw_cmd = raw
                 ret = await try_await(fn(**args_dict))
