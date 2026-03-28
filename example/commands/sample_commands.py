@@ -51,6 +51,15 @@ async def async_bad_name():
     """
     cprint("This is async!", "green")
 
+@command("completions")
+@argument('name', choices=['harry', 'sally', 'dini', 'pinky', 'maya'],
+          description="the name you seek")
+def completions(name: str):
+    "Check completions"
+    cprint(f"{name=}")
+
+    return 0
+
 
 @command
 @argument("number", type=int)
@@ -168,7 +177,7 @@ class SuperCommand:
 def test_mac(mac):
     """
     Test command for MAC address parsing without quotes.
-    
+
     Examples:
     - test_mac 00:01:21:ab:cd:8f
     - test_mac 1234.abcd.5678
@@ -185,7 +194,7 @@ def test_mac(mac):
 def test_mac_pos(mac):
     """
     Test command for MAC address parsing as positional argument.
-    
+
     Examples:
     - test_mac_pos 00:01:21:ab:cd:8f
     - test_mac_pos 1234.abcd.5678

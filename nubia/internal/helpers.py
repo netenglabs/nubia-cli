@@ -226,3 +226,56 @@ def suggestions_msg(suggestions: Optional[Iterable[str]]) -> str:
         return ""
     else:
         return f", Did you mean {', '.join(suggestions[:-1])} or {suggestions[-1]}?"
+
+
+def matches_choice_pattern(value: str, choices: list) -> bool:
+    """
+    Check if a value matches any of the choices, supporting pattern matching and negation.
+
+    The function supports two modes:
+    1. If the input value contains patterns (~, !, !~), it validates the pattern syntax
+    2. If the input value is literal, it matches against the choices list
+
+    Supported input patterns:
+    - '!pattern' - negation (reject if pattern matches any choice)
+    - '~pattern' - regex pattern (accept if pattern matches any choice)
+    - '!~pattern' - negated regex pattern (reject if pattern matches any choice)
+    - Regular string matching for exact matches
+
+    Args:
+        value: The value to check (can contain patterns)
+        choices: List of valid choices (literal values)
+
+    Returns:
+        bool: True if the value is valid, False otherwise
+    """
+    # If the input value contains patterns, validate the pattern syntax
+    if value.startswith('!~'):
+        # Negated regex pattern: !~pattern
+        pattern = value[2:]
+        try:
+            # Test if the regex is valid
+            re.compile(pattern)
+            return True  # Valid regex syntax
+        except re.error:
+            return False  # Invalid regex syntax
+
+    elif value.startswith('~'):
+        # Regex pattern: ~pattern
+        pattern = value[1:]
+        try:
+            # Test if the regex is valid
+            re.compile(pattern)
+            return True  # Valid regex syntax
+        except re.error:
+            return False  # Invalid regex syntax
+
+    elif value.startswith('!'):
+        # Negation pattern: !pattern
+        literal = value[1:]
+        # Check if the literal after ! exists in choices
+        return literal in [str(choice) for choice in choices]
+
+    else:
+        # Regular literal matching
+        return value in [str(choice) for choice in choices]
