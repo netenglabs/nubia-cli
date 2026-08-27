@@ -51,7 +51,8 @@ wcwidth = "^0.2.5"
 
 [tool.poetry.dev-dependencies]
 codecov = "*"
-nose = "^1.3.7"
+pytest = "^8.3"
+pytest-cov = "^4.1"
 pre-commit = "^2.16.0"
 black = "~23"
 importmagic = "^0.1.7"
@@ -60,6 +61,9 @@ later = "~23.11"
 flake8 = "~6.1"
 jedi = "^0.19"
 rope = "~1.11"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
