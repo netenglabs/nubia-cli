@@ -7,25 +7,27 @@ suite, and how to add new tests.
 
 ## Test Infrastructure
 
-**Framework:** `nose` (`nosetests`), plus `later.unittest.TestCase` for tests that
-exercise async command functions.
+**Framework:** `pytest`, plus `later.unittest.TestCase` for tests that exercise async
+command functions.
 
 **Run the tests:**
 
 ```bash
-nosetests tests/
+poetry run pytest
 ```
 
 Or run a single file:
 
 ```bash
-nosetests tests/commands_test.py
+poetry run pytest tests/commands_test.py
 ```
 
 **Test file locations:** all tests live under `tests/`.
 
 **Dependencies** (declared in `pyproject.toml` under `[tool.poetry.dev-dependencies]`):
-- `nose ^1.3.7`
+- `pytest ^8.3` (the newest 8.x release still supporting Python 3.8; pytest
+  8.4+ raised its floor to Python 3.9)
+- `pytest-cov ^4.1` — used in CI for `--cov=nubia` coverage reporting
 - `later ~23.11` — provides `later.unittest.TestCase`, which handles the asyncio event
   loop for async test methods
 

@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (deprecated since Python 3.10); uses the `Thread.name` attribute
   directly instead.
 
+### Changed
+- Test suite now runs on `pytest` instead of `nose`/`nosetests`, which is
+  unmaintained and broken on Python 3.10+. CI now tests against
+  Python 3.8–3.11 (previously 3.7–3.9), matching the range declared in
+  `pyproject.toml`.
+
 ## [0.3.0] - 2021-12-01
 
 ### Added
