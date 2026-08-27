@@ -26,6 +26,9 @@ class TestPlugin(PluginInterface):
 
 
 class TestShell(Nubia):
+    # Not a test case; tell pytest not to try collecting it despite the name.
+    __test__ = False
+
     def __init__(self, commands, name="test_shell"):
         super(TestShell, self).__init__(name, plugin=TestPlugin(commands), testing=True)
 
