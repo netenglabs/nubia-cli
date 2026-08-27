@@ -102,7 +102,7 @@ python -m nubia_example
 To run the unit tests:
 
 ```bash
-poetry run nosetests
+poetry run pytest
 ```
 
 ## Getting Started

@@ -6,9 +6,8 @@
 # This source code is licensed under the BSD-style license found in the
 # LICENSE file in the root directory of this source tree.
 #
-import os
-import sys
 import tempfile
+from unittest import mock
 
 from later.unittest import TestCase
 
@@ -32,7 +31,7 @@ class ReadStdinTest(TestCase):
         )
         command_file.write("test-command arg=test_arg")
         command_file.flush()
-        os.lseek(command_file.fileno(), 0, os.SEEK_SET)
-        os.dup2(command_file.fileno(), sys.stdin.fileno())
+        command_file.seek(0)
         shell = TestShell(commands=[test_command])
-        self.assertEqual(22, await shell.run_async(cli_args=["", "connect"]))
+        with mock.patch("sys.stdin", command_file):
+            self.assertEqual(22, await shell.run_async(cli_args=["", "connect"]))
