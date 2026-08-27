@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- `ContextFilter` no longer uses the deprecated `Thread.getName()`
+  (deprecated since Python 3.10); uses the `Thread.name` attribute
+  directly instead.
+
 ## [0.3.0] - 2021-12-01
 
 ### Added
