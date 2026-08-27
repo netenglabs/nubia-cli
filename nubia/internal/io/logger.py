@@ -35,7 +35,7 @@ class ContextFilter(logging.Filter):
         # thread name (optional)
         record.thread = ""
         if record.levelno <= logging.DEBUG:
-            thread = threading.current_thread().getName()
+            thread = threading.current_thread().name
             if thread != "MainThread":
                 record.thread = "thread {}: ".format(thread)
 
